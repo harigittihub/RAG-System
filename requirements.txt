@@ -4,4 +4,3 @@ scikit-learn
 sentence-transformers
 faiss-cpu
 streamlit
-anthropic
