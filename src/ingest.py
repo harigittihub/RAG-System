@@ -45,37 +45,33 @@ def extract_pages(pdf_path: str) -> list[dict]:
             pages.append({"page": i, "text": text})
     return pages
 
+def looks_like_references(text: str) -> bool:
+    """Bibliography chunks are dense with 'arXiv' / URLs and useless for Q&A."""
+    t = text.lower()
+    return t.count("arxiv") + t.count("http") >= 3
+
+
 def chunk_pages(
     pages: list[dict],
     chunk_size: int = 200,
     overlap: int = 40,
     min_page_words: int = 100,
 ) -> list[dict]:
-    """
-    Split each page into overlapping word-based chunks.
-    Pages with fewer than `min_page_words` words (figure-only pages) are skipped.
-    Returns a list of {'chunk_id': int, 'page': int, 'text': str}.
-    """
+    """Overlapping word chunks per page; skips figure-only pages and reference lists."""
     if overlap >= chunk_size:
         raise ValueError("overlap must be smaller than chunk_size")
 
     chunks = []
-    chunk_id = 0
     for page in pages:
         words = page["text"].split()
-        if len(words) < min_page_words:   # figure labels / near-empty page
+        if len(words) < min_page_words:
             continue
         start = 0
         while start < len(words):
             end = start + chunk_size
-            chunks.append(
-                {
-                    "chunk_id": chunk_id,
-                    "page": page["page"],
-                    "text": " ".join(words[start:end]),
-                }
-            )
-            chunk_id += 1
+            text = " ".join(words[start:end])
+            if not looks_like_references(text):
+                chunks.append({"chunk_id": len(chunks), "page": page["page"], "text": text})
             if end >= len(words):
                 break
             start = end - overlap

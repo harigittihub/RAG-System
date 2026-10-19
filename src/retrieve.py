@@ -22,6 +22,25 @@ class TfidfRetriever:
         top_ids = np.argsort(scores)[::-1][:k]
         return [{**self.chunks[i], "score": float(scores[i])} for i in top_ids]
 
+class DenseRetriever:
+    """Semantic retriever: sentence embeddings + FAISS cosine search."""
+
+    def __init__(self, chunks: list[dict], model=None, index=None):
+        from src.embed import build_index, load_model
+
+        self.chunks = chunks
+        self.model = model if model is not None else load_model()
+        self.index = index if index is not None else build_index(chunks, self.model)
+
+    def search(self, query: str, k: int = 3) -> list[dict]:
+        query_vec = self.model.encode([query], normalize_embeddings=True).astype("float32")
+        scores, ids = self.index.search(query_vec, k)
+        return [
+            {**self.chunks[i], "score": float(s)}
+            for s, i in zip(scores[0], ids[0])
+            if i != -1
+        ]
+
 
 if __name__ == "__main__":
     import sys
@@ -29,9 +48,11 @@ if __name__ == "__main__":
     from src.ingest import chunk_pages, extract_pages
 
     pdf_path, query = sys.argv[1], sys.argv[2]
-    chunks = chunk_pages(extract_pages(pdf_path), chunk_size=200, overlap=40)
-    retriever = TfidfRetriever(chunks)
+    chunks = chunk_pages(extract_pages(pdf_path), chunk_size=150, overlap=30)
 
-    for rank, hit in enumerate(retriever.search(query, k=3), start=1):
-        print(f"\n#{rank} | page {hit['page']} | score {hit['score']:.3f}")
-        print(hit["text"][:400], "...")
+    retrievers = [("TF-IDF", TfidfRetriever(chunks)), ("Dense", DenseRetriever(chunks))]
+    for name, retriever in retrievers:
+        print(f"\n===== {name} =====")
+        for rank, hit in enumerate(retriever.search(query, k=3), start=1):
+            print(f"#{rank} | page {hit['page']} | score {hit['score']:.3f}")
+            print(hit["text"][:250], "...\n")
