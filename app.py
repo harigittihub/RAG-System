@@ -1,6 +1,6 @@
 import sys
 
-from src.generate import generate_answer
+from src.generate import generate_answer, unsupported_citations
 from src.ingest import chunk_pages, extract_pages
 from src.retrieve import HybridRetriever
 
@@ -14,8 +14,15 @@ def main(pdf_path: str) -> None:
         query = input("\nQuestion> ").strip()
         if query.lower() in {"", "quit", "exit"}:
             break
+
         hits = retriever.search(query, k=5)
-        print("\nAnswer:", generate_answer(query, hits))
+        answer = generate_answer(query, hits)
+        print("\nAnswer:", answer)
+
+        bad = unsupported_citations(answer, hits)
+        if bad:
+            print(f"\nWARNING: cited pages not in retrieved context: {bad}")
+
         print("\nSources:")
         for h in hits:
             snippet = h["text"][:110].replace("\n", " ")

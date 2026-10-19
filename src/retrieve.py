@@ -44,11 +44,11 @@ class DenseRetriever:
 class HybridRetriever:
     """Reciprocal Rank Fusion of TF-IDF (lexical) and dense (semantic) rankings."""
 
-    def __init__(self, chunks: list[dict], rrf_k: int = 60):
+    def __init__(self, chunks: list[dict], rrf_k: int = 60, tfidf=None, dense=None):
         self.rrf_k = rrf_k
         self.by_id = {c["chunk_id"]: c for c in chunks}
-        self.tfidf = TfidfRetriever(chunks)
-        self.dense = DenseRetriever(chunks)
+        self.tfidf = tfidf or TfidfRetriever(chunks)
+        self.dense = dense or DenseRetriever(chunks)
 
     def search(self, query: str, k: int = 4, candidates: int = 20) -> list[dict]:
         fused: dict[int, float] = {}

@@ -1,4 +1,5 @@
 import ollama
+import re
 
 MODEL = "llama3.2:3b"
 
@@ -26,3 +27,12 @@ def generate_answer(query: str, hits: list[dict], model: str = MODEL) -> str:
         options={"temperature": 0, "num_ctx":4096},  # deterministic, less creative drift
     )
     return response["message"]["content"].strip()
+
+def cited_pages(answer: str) -> set[int]:
+    """Pages the model cites, e.g. [p.5] or [p.1-p.4] -> {5} / {1, 4}."""
+    return {int(n) for n in re.findall(r"p\.(\d+)", answer)}
+
+
+def unsupported_citations(answer: str, hits: list[dict]) -> list[int]:
+    """Cited pages that were NOT in the retrieved context (likely hallucinated)."""
+    return sorted(cited_pages(answer) - {h["page"] for h in hits})
