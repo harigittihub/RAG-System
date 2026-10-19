@@ -41,6 +41,22 @@ class DenseRetriever:
             if i != -1
         ]
 
+class HybridRetriever:
+    """Reciprocal Rank Fusion of TF-IDF (lexical) and dense (semantic) rankings."""
+
+    def __init__(self, chunks: list[dict], rrf_k: int = 60):
+        self.rrf_k = rrf_k
+        self.by_id = {c["chunk_id"]: c for c in chunks}
+        self.tfidf = TfidfRetriever(chunks)
+        self.dense = DenseRetriever(chunks)
+
+    def search(self, query: str, k: int = 4, candidates: int = 20) -> list[dict]:
+        fused: dict[int, float] = {}
+        for retriever in (self.tfidf, self.dense):
+            for rank, hit in enumerate(retriever.search(query, k=candidates), start=1):
+                fused[hit["chunk_id"]] = fused.get(hit["chunk_id"], 0.0) + 1.0 / (self.rrf_k + rank)
+        top_ids = sorted(fused, key=fused.get, reverse=True)[:k]
+        return [{**self.by_id[cid], "score": fused[cid]} for cid in top_ids]
 
 if __name__ == "__main__":
     import sys
