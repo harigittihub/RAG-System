@@ -8,5 +8,26 @@
   {"question": "What are the limitations of the method?", "pages": [9]},
   {"question": "Which layers of Flux are used for the saliency maps?", "pages": [6]},
   {"question": "Which video generation model was it applied to?", "pages": [2, 7, 9]},
-  {"question": "How does ConceptAttention compare to DAAM on ImageNet-Segmentation?", "pages": [6]}
+  {"question": "How does ConceptAttention compare to DAAM on ImageNet-Segmentation?", "pages": [6]},
+
+  {"question": "Which base model was used for most of the experiments?", "pages": [6]},
+  {"question": "How many PascalVOC images are in the single-class and multi-class splits?", "pages": [7]},
+  {"question": "What metrics are used to evaluate the segmentation results?", "pages": [8]},
+  {"question": "How is the binary segmentation prediction obtained from the raw scores?", "pages": [8]},
+  {"question": "What concepts make up the vocabulary for each image in the single-object evaluation?", "pages": [8]},
+  {"question": "How was ConceptAttention adapted to the video model?", "pages": [7]},
+  {"question": "Why did the authors not compare against SAM?", "pages": [4]},
+  {"question": "Why can't some methods like DINO be evaluated on multi-class images?", "pages": [7]},
+  {"question": "What is the vocabulary limitation of raw cross attention maps in multi-modal DiTs?", "pages": [6]},
+  {"question": "Does the method need any additional training?", "pages": [1, 2, 5]},
+  {"question": "How are the user's concepts turned into embeddings?", "pages": [5]},
+  {"question": "What does the model do when none of the given concepts appears in the image?", "pages": [9, 16]},
+  {"question": "Does adding noise to the input image help segmentation quality?", "pages": [8, 9]},
+  {"question": "Do deeper layers give better segmentation than early layers?", "pages": [8, 9]},
+  {"question": "Why combine cross attention with self attention among the concepts?", "pages": [5, 7, 9]},
+  {"question": "Which representation space gave the best results: attention outputs, values or cross attention?", "pages": [1, 2, 7]},
+  {"question": "Besides Flux, which other image model were the results reproduced on?", "pages": [2, 6, 7]},
+  {"question": "Which kind of model architecture did earlier interpretability work focus on?", "pages": [1, 2, 3]},
+  {"question": "How does the method do on images containing several objects compared to baselines?", "pages": [6, 8]},
+  {"question": "Where can I see pseudo-code comparing normal multi-modal attention with concept attention?", "pages": [13]}
 ]

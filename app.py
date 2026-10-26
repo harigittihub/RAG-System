@@ -2,12 +2,12 @@ import sys
 
 from src.generate import generate_answer, unsupported_citations
 from src.ingest import chunk_pages, extract_pages
-from src.retrieve import HybridRetriever
+from src.retrieve import HybridRetriever, TfidfRetriever
 
 
 def main(pdf_path: str) -> None:
-    chunks = chunk_pages(extract_pages(pdf_path), chunk_size=150, overlap=30)
-    retriever = HybridRetriever(chunks)
+    chunks = chunk_pages(extract_pages(pdf_path), chunk_size=100, overlap=20)
+    retriever = TfidfRetriever(chunks)
     print(f"Loaded {len(chunks)} chunks. Ask a question (empty line or 'quit' to exit).")
 
     while True:

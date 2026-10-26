@@ -53,8 +53,8 @@ def looks_like_references(text: str) -> bool:
 
 def chunk_pages(
     pages: list[dict],
-    chunk_size: int = 200,
-    overlap: int = 40,
+    chunk_size: int = 100,
+    overlap: int = 20,
     min_page_words: int = 100,
 ) -> list[dict]:
     """Overlapping word chunks per page; skips figure-only pages and reference lists."""
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     import sys
 
     pages = extract_pages(sys.argv[1])
-    chunks = chunk_pages(pages, chunk_size=200, overlap=40)
+    chunks = chunk_pages(pages, chunk_size=100, overlap=20)
 
     lengths = [len(c["text"].split()) for c in chunks]
     print(f"Pages: {len(pages)} | Chunks: {len(chunks)}")
