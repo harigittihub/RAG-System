@@ -15,7 +15,7 @@ def main(pdf_path: str) -> None:
         if query.lower() in {"", "quit", "exit"}:
             break
 
-        hits = retriever.search(query, k=5)
+        hits = retriever.search(query, k=6)
         answer = generate_answer(query, hits)
         print("\nAnswer:", answer)
 
